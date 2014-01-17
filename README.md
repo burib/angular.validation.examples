@@ -1,4 +1,4 @@
-angular.validation.examples
+<a href="http://angularjs.org/" target="_blank">AngularJS</a> validation examples
 ===========================
 
  - <a href="https://rawgithub.com/burib/angular.validation.examples/master/onSubmit.click/index.html" target="_blank">on submit click demo</a> <i>(validates when user submits the form)</i>
