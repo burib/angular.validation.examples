@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+    <style>
+        body { padding-top:30px; }
+        .form-group { position: relative; }
+        .form-errors-popup { position: absolute; top: 40px; left: 10px; background: #fefefe; border: 1px solid #ccc; padding: 10px; border-radius: 3px; list-style-type: disc; list-style-position: inside;}
+    </style>
+</head>
+<body ng-app="validationApp" ng-controller="mainController">
+    <div class="container">
+        <div class="col-sm-8 col-sm-offset-2">
+            <div class="page-header"><h3>AngularJS Simple Form Validation on submit</h3></div>
+            <form name="userForm" ng-submit="submitForm()" novalidate autocomplete="off">
+                <div class="form-group" ng-class="{ 'has-error' : userForm.name.$invalid && submitted }">
+                    <label>Name</label>
+                    <input type="text" name="name" class="form-control" ng-model="name" required>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : userForm.username.$invalid && submitted }">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control" ng-model="username" required ng-minlength="3" ng-maxlength="8">
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : userForm.email.$invalid && submitted }">
+                    <label>Email</label>
+                    <input type="email" name="email" class="form-control" ng-model="email">
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" ng-mouseover="validateForm()" ng-mouseleave="showErrors = false">Submit</button>
+                    <ul ng-show="showErrors" class="form-errors-popup list-unstyled">
+                        <li ng-repeat="error in errorMessages track by $index" class="text-danger">{{error.message}}</i></li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular.min.js"></script>
+    <script>
+        angular.module('validationApp', []).controller('mainController', function($scope) {
+            $scope.showErrors = false;
+            var errorMessages = {
+                "required": " is required.",
+                "minlength": "The minimum length is {{minlength}",
+                "email": "invalid email address.",
+                "name": {
+                    "required": "This field is very required. (custom error message)"
+                }
+            };
+            var setErrorMessage = function (element,key) {
+                /**
+                 * @TODO: pass arguments
+                 */
+                return (errorMessages[element.$name] && errorMessages[element.$name][key]) || element.$name + ' ' + (errorMessages[key] || ' invalid');
+            };
+
+            $scope.validateForm = function () {
+                $scope.showErrors = true;
+                var errObj = null,
+                    errors = {};
+                $scope.errorMessages = [];
+                angular.forEach($scope.userForm.$error,function (value, key) {
+                    value.forEach(function (element) {
+                        errObj = {
+                            field: element.$name,
+                            code: key,
+                            message: setErrorMessage(element,key)
+                        };
+                        $scope.errorMessages.push(errObj);
+                    });
+                });
+                console.log($scope.errorMessages);
+
+            };
+            $scope.submitForm = function() {
+                $scope.submitted = true;
+                if ($scope.userForm.$valid) {
+                    alert('form is valid. sending...');
+                } else {
+                    $scope.validateForm();
+                }
+            };
+        });
+    </script>
+</body>
+</html>
